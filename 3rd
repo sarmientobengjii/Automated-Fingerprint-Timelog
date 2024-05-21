@@ -1,0 +1,20 @@
+csv = "Date,AM/PM,Name,In,Out,Hours\n"
+
+for date in timelogs.keys():
+    timelogs_date = timelogs[date]
+
+    for am_or_pm in timelogs_date.keys():
+        timelogs_am_or_pm = timelogs_date[am_or_pm]
+
+        for user_name in timelogs_am_or_pm.keys():
+            user = timelogs_am_or_pm[user_name]
+            user_in = user.get('in', user.get('out'))
+            user_out = user.get('out', user.get('in'))
+            
+            if not user_in or not user_out:
+                continue
+            hours_rendered = (user_out - user_in).total_seconds() / 60 / 60
+
+            csv += f"{date}, {am_or_pm}, {user_name}, {user_in.time()}, {user_out.time()}, {hours_rendered}\n"
+
+print(csv)
