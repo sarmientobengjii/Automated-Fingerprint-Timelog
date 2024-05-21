@@ -1,0 +1,50 @@
+# user_id
+# timestamp
+# status
+# punch
+
+# ilang oras pumasok si Jam noong March 5, Tuesday
+# ilang oras pumasok si Harvey noong March 5, Tuesday
+# ilang oras pumasok si Jam noong buong linggo ng March 5 - March 9
+# ilang oras pumasok si Harvey noong buong linggo ng March 5 - March 9
+
+# timelogs[date][am_or_pm][user_name][in_or_out]
+timelogs = {
+}
+
+for timelog in attendances:
+    user_name = user_dict.get(timelog["user_id"])
+    punch = timelog["punch"]
+    timestamp = datetime.strptime(timelog["timestamp"], '%Y-%m-%d %H:%M:%S')
+
+    if timelog["punch"] == 201:
+        continue
+
+    in_or_out = "in" if punch == 0 else "out"
+    
+
+    am_or_pm = "am" if timestamp.hour < 12 else "pm"
+
+    date = str(timestamp.date())
+
+    # initialize timelogs dictionary. para magkaron ng laman yung keys
+    if not timelogs.get(date):
+        timelogs[date] = dict()
+    if not timelogs.get(date).get(am_or_pm):
+        timelogs[date][am_or_pm] = dict()
+    if not timelogs.get(date).get(am_or_pm).get(user_name):
+        timelogs[date][am_or_pm][user_name] = dict()
+
+    # am - 11 - 12
+    # pm - None - 
+    if in_or_out == "in":
+        if not timelogs[date][am_or_pm][user_name].get(in_or_out):
+            timelogs[date][am_or_pm][user_name][in_or_out] = timestamp
+    else:  # out
+        if timelogs[date]["am"].get(user_name, {}).get("in") and not timelogs[date].get("pm", {}).get(user_name, {}).get("in"):
+            am_or_pm = "am"
+        timelogs[date][am_or_pm][user_name][in_or_out] = timestamp
+    # timelogs[date][am_or_pm][user_name][in_or_out]
+    # datetime.time: hour, minute, second
+
+print(timelogs)
